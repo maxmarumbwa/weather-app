@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>W3.CSS Styled Sidebar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        /* Sidebar Styles */
+        .sidebar {
+            width: 23%;
+            height: 100vh;
+            background-color: lightgrey;
+            padding: 16px;
+            position: fixed;
+            top: 0;
+            left: 0;
+        }
+
+        /* Sidebar Links */
+        .sidebar a {
+            display: block;
+            padding: 12px;
+            text-decoration: none;
+            color: black;
+            background-color: white;
+            margin-bottom: 8px;
+        }
+
+        .sidebar a:hover {
+            background-color: #ddd;
+        }
+
+        /* Page Content */
+        .content {
+            margin-left: 25%;
+        }
+
+        /* Header Styles */
+        .header {
+            background-color: teal;
+            color: white;
+            padding: 16px;
+        }
+
+        /* Container Styles */
+        .container {
+            padding: 16px;
+        }
+
+        /* Full-width image */
+        .full-width-img {
+            width: 50%;
+            margin-top: 16px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h3>Menu</h3>
+    <a href="#">Link 1</a>
+    <a href="#">Link 2</a>
+    <a href="#">Link 3</a>
+</div>
+
+<!-- Page Content -->
+<div class="content">
+    <div class="header">
+        <h1>My Page</h1>
+    </div>
+
+    <img src="img_car.jpg" alt="Car" class="full-width-img">
+
+    <div class="container">
+        <h2>Sidebar Navigation Example</h2>
+        <p>The sidebar width is set using CSS.</p>
+        <p>The left margin of the page content is set to the same value.</p>
+    </div>
+</div>
+
+</body>
+</html>
