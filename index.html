@@ -8,6 +8,10 @@
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="assets/css/styles.css">
+  <link rel="stylesheet" href="assets/css/style.css">
+   <!-- For importing csv, kml, gjson-->
+  <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+    
     <style>
         /* Sidebar Styles */
         .sidebar {
@@ -27,7 +31,7 @@
             text-decoration: none;
             color: black;
             background-color: white;
-            margin-bottom: 8px;
+            margin-bottom: 18px;
         }
 
         .sidebar a:hover {
@@ -93,7 +97,7 @@
     <a href="#">Raster maps</a>
     <a href="#">Graphs </a>
     <a href="#">Data analytics</a>   
-    <a href="#">Alerts</a>
+    <a href="#">Weather alerts</a>
     <a href="#">Settings and uploads</a>
 </div>
 
@@ -101,25 +105,78 @@
 <div class="content">
     <div class="header">
         <h1>Weather monitoring system</h1>
+        <p  > add some butons for printing / exporting  maps here</p>
     </div>
 
         <!-- Page 2 -->
-<div class="w3-row">
-    <div id="map"   class="w3-col w3-green w3-container" style="width:1200%" style="height: 900%;">
-      <img src="/assets/images/sat.jpg" alt="Car" height="90%">
-        <p>Rainfall stations</p>
+    <div class="w3-row">
+        <div id="map" style="width:1700%">
+            <p>Rainfall stations</p>
+        </div>
+        <div id="map22" style="padding: 15px;border: #d57c7c; width: 900%;" >
+        <!-- <div id="map2" style="padding: 15px; background-color:aqua; width: 700%;" ></div> -->
+            <p>insert summary of <br>key weather elements
+            <br>here with some graphic <br>alternatively add graph<br><br></p>
+        </div>
     </div>
-    <script>
-        var map = L.map('map').setView([-19.0154, 29.1549], 6);
-          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-          maxZoom: 19,
-          }).addTo(map);
-      </script>
-    
-    <div class="w3-col w3-blue w3-container" style="width:50%"><p>insert summary of <br>key weather elements
-      <br>here with some graphic <br>alternatively add graph<br><br></p></div>
-  </div>
 </div>
+
+<!-- Page 2 -->
+<div class="2" style="background-color: #d57c7c padding50px; width: 80%; layout:flex-direction">
+
+</div>
+
+<!-- Leaflet javascript code here -->
+<script>
+    var map = L.map('map').setView([-19.0154, 29.1749], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19 ,minZoom: 6,
+      }).addTo(map);
+
+    /* add baseline data
+    /* major cities */
+    var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv")
+    var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson")
+    var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson")
+
+   /*  markers for major cities  */
+    var marker = L.marker([-19.0453, 29.172]).addTo(map);
+    var cities = [
+        { name: "Harare", coords: [-17.8292, 31.0522] },
+        { name: "Bulawayo", coords: [-20.1575, 28.5835] },
+        { name: "Gweru", coords: [-19.45, 29.8167] },
+        { name: "Mutare", coords: [-18.9707, 32.6709] },
+        { name: "Masvingo", coords: [-20.0637, 30.8277] },
+        { name: "Hwange", coords: [-18.3651, 26.4988] }
+    ];
+
+    // Create a layer group
+    var cityMarkers = L.layerGroup();
+
+    // Loop through the cities and add markers
+    cities.forEach(function(city) {
+        var marker = L.marker(city.coords)
+            .bindPopup(`<b>${city.name}</b>`)
+            .addTo(cityMarkers);
+    });
+    // Add the layer group to the map
+    cityMarkers.addTo(map);
+    major_stns.addTo(map);
+    adm1.addTo(map)
+    adm2.addTo(map)
+
+    /* add csv */
+   
+
+
+    
+    var map2 = L.map('map2').setView([-19.0154, 29.1749], 6);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    }).addTo(map2);
+
+  </script>
+
 
 </body>
 </html>
