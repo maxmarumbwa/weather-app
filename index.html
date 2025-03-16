@@ -121,10 +121,6 @@
     </div>
 </div>
 
-<!-- Page 2 -->
-<div class="2" style="background-color: #d57c7c padding50px; width: 80%; layout:flex-direction">
-
-</div>
 
 <!-- Leaflet javascript code here -->
 <script>
@@ -133,11 +129,32 @@
       maxZoom: 19 ,minZoom: 6,
       }).addTo(map);
 
-    /* add baseline data
-    /* major cities */
-    var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv")
+    /* add baseline data*/
+    /* var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").addTo(map); */
+    /*var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map) */
+    /* var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").addTo(map) */
+
+    /* Add the pop binder */
     var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson")
-    var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson")
+    .on('ready', function(layer) {
+        var geojsonadm1 = layer.target;
+        geojsonadm1.eachLayer(function(layer) {
+            layer.bindPopup("Province: " + layer.feature.properties.ADM1_EN);
+        });
+    })
+    .addTo(map);
+
+    /* add stations */
+
+    var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").on('ready', function(layer) {
+        var csvStns = layer.target;
+        csvStns.eachLayer(function(layer) {layer.bindPopup("Station: " + layer.feature.properties.Station)});
+    })
+    .addTo(map);
+    
+
+/* /* /* /* /* add layers with tooltips */
+
 
    /*  markers for major cities  */
     var marker = L.marker([-19.0453, 29.172]).addTo(map);
@@ -161,12 +178,9 @@
     });
     // Add the layer group to the map
     cityMarkers.addTo(map);
-    major_stns.addTo(map);
-    adm1.addTo(map)
-    adm2.addTo(map)
 
-    /* add csv */
-   
+
+       
 
 
     
