@@ -113,7 +113,7 @@
         <div id="map" style="width:1700%">
             <p>Rainfall stations</p>
         </div>
-        <div id="map22" style="padding: 15px;border: #d57c7c; width: 900%;" >
+        <div id="map2" style="padding: 15px;border: #d57c7c; width: 900%;" >
         <!-- <div id="map2" style="padding: 15px; background-color:aqua; width: 700%;" ></div> -->
             <p>insert summary of <br>key weather elements
             <br>here with some graphic <br>alternatively add graph<br><br></p>
@@ -146,11 +146,12 @@
 
     /* add stations */
 
-    var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").on('ready', function(layer) {
-        var csvStns = layer.target;
-        csvStns.eachLayer(function(layer) {layer.bindPopup("Station: " + layer.feature.properties.Station)});
+    var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map);
+    majorStns.on('ready', function(layer) {
+    majorStns.eachLayer(function(layer) {
+    layer.bindPopup("Station: " + layer.feature.properties.Station)});
     })
-    .addTo(map);
+    
     
 
 /* /* /* /* /* add layers with tooltips */
@@ -179,15 +180,41 @@
     // Add the layer group to the map
     cityMarkers.addTo(map);
 
-
-       
-
-
-    
     var map2 = L.map('map2').setView([-19.0154, 29.1749], 6);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     }).addTo(map2);
+
+
+
+
+
+
+
+// ----------------- Filter dataset  -----------------//
+// Define a custom layer with a filter function
+var customLayer = L.geoJson(null, {
+    filter: function (feature) {
+        return feature.properties.Rainfall_mm < 10; // Only keep records with rainfall > 20
+    },
+    pointToLayer: function (feature, latlng) {
+        return L.marker(latlng).bindPopup(
+            "<b>Station:</b> " + feature.properties.Station + 
+            "<br><b>Rainfall:</b> " + feature.properties.Rainfall_mm + " mm"
+        );
+    }
+});
+
+// Load CSV data using omnivore
+var weatherStations = omnivore.csv("/assets/data/csv/weather_data_small.csv", null, customLayer)
+    .on('ready', function () {
+        console.log("CSV Data Loaded Successfully!");
+    })
+    .addTo(map2);
+
+
+
+
 
   </script>
 
