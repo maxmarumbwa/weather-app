@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Split Layout</title>
+      <!--For leaflet  -->
+      <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+      <link rel="stylesheet" href="assets/css/styles.css">
+      <link rel="stylesheet" href="assets/css/style.css">
+       <!-- For importing csv, kml, gjson-->
+      <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
+        
+
+    <style>
+        body{
+            margin: 40;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .parent {
+            display: flex;
+            margin: 40;
+            height: 100vh;
+            overflow: hidden;
+			
+        }
+        .left {
+            width: 25%;
+            background-color:rgb(155, 197, 197);
+            padding: 20px;
+		
+        }
+        .right {
+            width: 75%;
+            background-color: #5bb0d2;
+            padding:20px;
+            overflow-y:auto;
+        }
+        .banner{
+            background-color:rgb(188, 188, 232);
+            padding: 5px;
+            color: aliceblue;
+            text-align: center;
+            
+        }
+	ul{
+		font-size: larger; 
+		font-weight:bolder;
+	}
+    .navbar {
+        color:rgb(179, 8, 8);
+        font-size: larger;
+
+    }
+
+    map {
+  height: 200px;
+  width: 450%;
+  background-color: powderblue;
+}
+
+
+    </style>
+</head>
+<body>
+    <!-- Content for the header and navigation bar -->
+    <div class="banner">
+        <h2>Weather monitoring app</h2>
+        <div class="navbar">
+            <a href="#home" >Home</a>
+            <a href="#maps">Maps</a>
+            <a href="#" class="w3-bar-item w3-button">About</a>
+            <a href="#link">Link 3</a>
+            <a href="#contact" id="contact-link"><span class="icon solid fa-envelope">Graphs</span></a>
+          </div>
+    </div>
+
+   
+    <div class="parent">
+        <div class="left">
+    <!-- Content for the left part -->
+            <img src="/assets/images/profile-pic.jpg" alt="" width="50%">
+            <p><h2>This is the left part (25%)</h2></p>
+            <ul>
+                <ol>apple</ol>
+                <ol>orange</ol>
+                <ol>apple</ol>
+            </ul>
+            <div style="margin-top: 20%;"> </div>
+        </div>
+    
+<!-- main page content here -->
+        <div class="right">
+            <div class="main" style="height: 2000; background-color:crimson">
+                <img src="/assets/images/banner_.jpg" width="100%">
+                <!-- Content for the right part -->
+                <p><h2>This is the right part w(75%)</h2>Seasoned Geospatial Data Scientist with 16+ years of experience in GIS, remote sensing, and geospatial software development. I've worked with organizations such as UNICEF, UN-WFP, NASA, and the European Union on risk modeling, environmental monitoring, and GIS applications.
+                Skills include Python, GDAL, ArcPy, R, Google Earth Engine, GIS database development, and parametric insurance modeling. </p>
+                <p>Seasoned Geospatial Data Scientist with 16+ years of experience.</p>
+	
+            </div>
+
+            <!-- Content for page 2 -->
+            <div id="map" style="width: 50vw; height: 70vh;background-color:rgb(183, 170, 170)">
+                <img src="/assets/images/clouds banner2.png" width="100%">
+                    <p><h2>Page 2 content</h2></p> 
+                    <p><h2>Page 2 content</h2></p> 
+                    <p><h2>Page 2 content</h2></p> 
+                            
+            </div>
+
+            <!-- Content for page 3 -->
+            <div style="height: 400px; background-color:rgb(154, 131, 43)">
+                <img src="/assets/images/clouds banner.png" width="100%">
+               <p><h2>Page 3 content</h2></p>
+
+            <!-- Content for page 4 -->
+            <div style="height: 400px; background-color:rgb(90, 16, 74)">
+                <img src="/assets/images/clouds banner.png" width="100%">
+               <p><h2>Page 4 content</h2></p>                
+              
+            <!-- Content for page 5 -->
+            <div style="height: 400px; background-color:rgb(30, 10, 99)">
+                <img src="/assets/images/clouds banner.png" width="100%">
+               <p><h2>Page 5 content</h2></p>
+        </div>
+
+    </div>
+
+    <script>
+    var map = L.map('map').setView([-19.0154, 29.1749], 6);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19 ,minZoom: 6,
+      }).addTo(map);
+    </script>
+</body>
+
+</html>

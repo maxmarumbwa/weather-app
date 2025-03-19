@@ -3,202 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Dashboard</title>
-
-    <!-- Leaflet CSS & JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <!--Plugins-->
-    <!-- For importing csv, kml, gjson-->
-    <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
-    
-    
-    
+    <title>Split Layout</title>
     <style>
-        /* Full-page layout */
-        body {
-            display: flex;
-            margin: 0;
+        body{
+            margin: 40;
             height: 100vh;
-            font-family: Arial, sans-serif;
-        }
-
-        /* Sidebar styling */
-        .sidebar {
-            width: 250px;
-            background-color: #343a40;
-            color: white;
+            overflow: hidden;
+			
+        .parent {
             display: flex;
-            flex-direction: column;
-            padding: 20px;
-            box-shadow: 2px 0px 5px rgba(0, 0, 0, 0.2);
+            margin: 40;
+            height: 100vh;
+            overflow: hidden;
+			
         }
-
-        .sidebar h2 {
+        .left {
+            width: 25%;
+            background-color:rgb(155, 197, 197);
+            padding: 20px;
+		
+        }
+        .right {
+            width: 75%;
+            background-color: #5bb0d2;
+            padding:20px;
+            overflow-y:auto;
+        }
+        .banner{
+            background-color:rgb(43, 43, 63);
+            padding: 20px;
+            color: aliceblue;
             text-align: center;
-            font-size: 20px;
-            margin-bottom: 20px;
+            
         }
-
-        .nav-links {
-            list-style: none;
-            padding: 0;
-        }
-
-        .nav-links li {
-            margin: 10px 0;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: white;
-            display: block;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        .nav-links a:hover {
-            background-color: #495057;
-        }
-
-        .upload-container {
-            margin-top: 20px;
-        }
-
-        .file-input {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            margin-bottom: 10px;
-        }
-
-        .upload-btn {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-
-        .upload-btn:hover {
-            background-color: #218838;
-        }
-
-        /* Main content area */
-        .content {
-            flex-grow: 1;
-            padding: 20px;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        #map {
-            width: 100%;
-            height: 500px;
-        }
+	ul{
+		font-size: larger; 
+		font-weight:bolder;
+	}
     </style>
 </head>
 <body>
-
-    <!-- Sidebar -->
-    <div class="sidebar">
-        <h2>Weather Dashboard</h2>
-        <ul class="nav-links">
-            <li><a href="#" onclick="showSection('home')">Home</a></li>
-            <li><a href="#" onclick="showSection('images')">Images</a></li>
-            <li><a href="#" onclick="showSection('graphs')">Graphs</a></li>
-            <li><a href="#" onclick="showSection('maps')">Maps</a></li>
-        </ul>
-
-        <div class="upload-container">
-            <input type="file" id="csvFile" class="file-input" accept=".csv">
-            <button class="upload-btn" onclick="uploadFile()">Upload & Display</button>
+    <div class="banner">
+        <h2>Weather monitoring app</h2>
+    </div>
+    <div class="parent">
+        <div class="left">
+            <!-- Content for the left part -->
+            <img src="/assets/images/profile-pic.jpg" alt="" width="100%">
+            <p><h2>This is the left part (25%)</h2></p>
+            <ul>
+                <ol>apple</ol>
+                <ol>orange</ol>
+                <ol>apple</ol>
+            </ul>
+            <div style="margin-top: 20%;"> </div>
         </div>
+    
+<!-- main page content here -->
+    <div class="right">
+        <div class="main">
+            <img src="/assets/images/banner_.jpg" width="100%">
+	        <!-- Content for the right part -->
+        <p><h2>This is the right part w(75%)</h2>Seasoned Geospatial Data Scientist with 16+ years of experience in GIS, remote sensing, and geospatial software development. I've worked with organizations such as UNICEF, UN-WFP, NASA, and the European Union on risk modeling, environmental monitoring, and GIS applications.
+			Skills include Python, GDAL, ArcPy, R, Google Earth Engine, GIS database development, and parametric insurance modeling. </p>
+			<p>Seasoned Geospatial Data Scientist with 16+ years of experience.</p>
+			<h2>intro</h2>
+			
+        </div>
+        <div>a</div>    
+        <div>b</div>    
+        <div>c</div>    
+        <div>d</div>    
+    </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="content">
-        <!-- Home Section -->
-        <div id="home">
-            <h1>Welcome to the Weather Dashboard</h1>
-            <p>Use the navigation menu to explore different sections.</p>
-        </div>
-
-        <!-- Images Section -->
-        <div id="images" class="hidden">
-            <h1>Weather Images</h1>
-            <p>Upload and view weather-related images here.</p>
-        </div>
-
-        <!-- Graphs Section -->
-        <div id="graphs" class="hidden">
-            <h1>Weather Data Graphs</h1>
-            <p>View time series and other analytical graphs.</p>
-        </div>
-
-        <!-- Maps Section -->
-        <div id="maps" class="hidden">
-            <h1>Weather Stations Map</h1>
-            <div id="map"></div>
-        </div>
-    </div>
-
-    <script>
-        var map = L.map('map').setView([-19.0154, 29.1549], 6); // Centered on Zimbabwe
-
-        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19,
-            attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-        }).addTo(map);
-
-        function uploadFile() {
-            let fileInput = document.getElementById("csvFile");
-            if (fileInput.files.length === 0) {
-                alert("Please select a CSV file!");
-                return;
-            }
-
-            let formData = new FormData();
-            formData.append("file", fileInput.files[0]);
-
-            fetch("/upload", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                map.eachLayer(layer => {
-                    if (layer instanceof L.Marker) {
-                        map.removeLayer(layer); // Clear previous markers
-                    }
-                });
-
-                data.forEach(station => {
-                    L.marker([station.Latitude, station.Longitude])
-                        .bindPopup(`<b>${station.Station}</b>`)
-                        .addTo(map);
-                });
-            })
-            .catch(error => console.error("Error:", error));
-        }
-
-        function showSection(sectionId) {
-            document.getElementById("home").classList.add("hidden");
-            document.getElementById("images").classList.add("hidden");
-            document.getElementById("graphs").classList.add("hidden");
-            document.getElementById("maps").classList.add("hidden");
-
-            document.getElementById(sectionId).classList.remove("hidden");
-        }
-
-        /* add csv */
-    omnivore.csv("/assets/data/weather_data.csv").addTo(map);
-
-
-    </script>
-
+		
 </body>
 </html>
