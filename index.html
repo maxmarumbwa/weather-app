@@ -3,15 +3,7 @@
 <head>
     <title>weather gespatial app</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-      <!--For leaflet  -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <link rel="stylesheet" href="assets/css/styles.css">
-  <link rel="stylesheet" href="assets/css/style.css">
-   <!-- For importing csv, kml, gjson-->
-  <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
-    
+ 
     <style>
         /* Sidebar Styles */
         .sidebar {
@@ -129,6 +121,17 @@
       maxZoom: 19 ,minZoom: 6,
       }).addTo(map);
 
+        // Base Map Layers
+    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    var satellite = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18,
+        attribution: '&copy; OpenTopoMap contributors'
+    });
+
     /* add baseline data*/
     /* var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").addTo(map); */
     /*var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map) */
@@ -195,7 +198,7 @@
 // Define a custom layer with a filter function
 var customLayer = L.geoJson(null, {
     filter: function (feature) {
-        return feature.properties.Rainfall_mm < 10; // Only keep records with rainfall > 20
+        return feature.properties.Rainfall_mm > 30; // Only keep records with rainfall > 20
     },
     pointToLayer: function (feature, latlng) {
         return L.marker(latlng).bindPopup(
@@ -212,8 +215,12 @@ var weatherStations = omnivore.csv("/assets/data/csv/weather_data_small.csv", nu
     })
     .addTo(map2);
 
-
-
+/* Layer control   */
+var baseMaps = {
+    "admin1": adm1,
+    "stations": majorStns
+  }
+  L.control.layers(baseMaps, satellite, osm, { collapsed: false }).addTo(map);
 
 
   </script>
@@ -222,4 +229,6 @@ var weatherStations = omnivore.csv("/assets/data/csv/weather_data_small.csv", nu
 </body>
 </html>
 
-	 
+
+
+
