@@ -46,6 +46,23 @@
             text-align: center;
             
         }
+
+      /*   Page 2 map and controls */
+        .map-parent{
+            display: flex;
+            border:#75092f;
+            height: 75%;
+           
+        }
+        .map-control{
+            width: 40vw;
+            
+
+        }
+        .main-map{
+          
+
+        }
 	ul{
 		font-size: larger; 
 		font-weight:bolder;
@@ -61,6 +78,7 @@
   width: 450%;
   background-color: powderblue;
 }
+    
 
 
     </style>
@@ -103,14 +121,19 @@
 	
             </div>
 
-            <!-- Content for page 2 -->
-            <div id="map" style="width: 50vw; height: 70vh;background-color:rgb(183, 170, 170)">
-                <img src="/assets/images/clouds banner2.png" width="100%">
-                    <p><h2>Page 2 content</h2></p> 
-                    <p><h2>Page 2 content</h2></p> 
-                    <p><h2>Page 2 content</h2></p> 
-                            
+            <!-- Content for page 2 with side by side divs -->
+            <div class="map-parent">
+                <div style="width: 80%; float:left" id="map">
+                    #left content in here
+                 </div>
+                 
+                 <div style="width: 20%; float:right" id="map1">
+                    <h2>Layer control</h2>
+                    <img src="/assets/images/pic02.jpg" width="100%">
+                 </div>
+
             </div>
+
 
             <!-- Content for page 3 -->
             <div style="height: 400px; background-color:rgb(154, 131, 43)">
@@ -131,11 +154,45 @@
     </div>
 
     <script>
-    var map = L.map('map').setView([-19.0154, 29.1749], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19 ,minZoom: 6,
-      }).addTo(map);
-    </script>
+            /* add baseline data*/
+        /* var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").addTo(map); */
+        /*var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map) */
+        /* var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").addTo(map) */
+
+        /* Add the pop binder */
+        var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson")
+        .on('ready', function(layer) {
+            var geojsonadm1 = layer.target;
+            geojsonadm1.eachLayer(function(layer) {
+                layer.bindPopup("Province: " + layer.feature.properties.ADM1_EN);
+            });
+        })
+        .addTo(map);
+
+        /* add stations */
+
+        var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map);
+        majorStns.on('ready', function(layer) {
+        majorStns.eachLayer(function(layer) {
+        layer.bindPopup("Station: " + layer.feature.properties.Station)});
+        })
+        
+    
+
+
+
+
+
+        var map = L.map('map').setView([-19.0154, 29.1749], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19 ,minZoom: 6,
+        }).addTo(map);
+
+        var map2 = L.map('map').setView([-19.0154, 29.1749], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19 ,minZoom: 6,
+        }).addTo(map2);
+        </script>
 </body>
 
 </html>

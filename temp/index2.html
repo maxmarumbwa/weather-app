@@ -1,27 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <!--For leaflet  -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- <link rel="stylesheet" href="assets/css/styles.css"> -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Monitoring App</title>
+
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Omnivore plugin for CSV/KML/GeoJSON -->
+    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .map-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+
+        .sidebar {
+            width: 20%;
+            background-color: #edf3f5;
+            padding: 10px;
+            overflow-y: auto;
+        }
+        .map-header{
+          background-color:rgb(115, 118, 118);
+          padding: 20px;
+          text-align: center;
+          color:white
+        }
+    </style>
 </head>
+<body>
 
-<body> 
-  <div id="map2"> Map
-  <script>
-    var map = L.map('map2').setView([-19.0154, 29.1549], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19,
-      }).addTo(map);
-  </script>
-   </div>
+  <header class="map-header">
+      <h2>Weather Monitoring App</h2>
+  </header>  
 
+    <div class="map-container">
+         <nav class="sidebar">
+            <h2>Layer Control</h2>
+            <h2>Basemapsl</h2>
+            <p>Some layers...</p>
+            <p>More layers...</p>
+            <p>Even more layers...</p>
+            <p>Scrollable content here...</p>
+            <p>Keep adding more layers and this div will scroll!</p>
+            <h2>Boundaries</h2>
+            <p>Some layers...</p>
+            <p>More layers...</p>
+            <p>Even more layers...</p>
+            <p>Scrollable content here...</p>
+            <p>Keep adding more layers and this div will scroll!</p>			<h2>Layer Control</h2>
+            <p>Some layers...</p>
+            <p>More layers...</p>
+            <p>Even more layers...</p>
+            <p>Scrollable content here...</p>
+            <p>Keep adding more layers and this div will scroll!</p>
+        </nav>     
+        <div id="map"></div>
+
+    </div>
+
+    <script>
+        console.log("Initializing map...");
+
+        // Initialize the map
+        var map = L.map('map').setView([-19.0154, 29.1749], 6);
+        console.log(map); // Check if map initializes correctly
+
+        // Define basemap layers
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, minZoom: 6
+        });
+
+        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, minZoom: 6
+        });
+
+        var satellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg', {
+            maxZoom: 19, minZoom: 6
+        });
+
+        // Add default basemap
+        osm.addTo(map);
+
+        // Define overlay layers
+        var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").on('ready', function(layer) {
+            layer.eachLayer(function(feature) {
+                feature.bindPopup("Province: " + feature.feature.properties.ADM1_EN);
+            });
+        });
+
+        var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").on('ready', function(layer) {
+            layer.eachLayer(function(feature) {
+                feature.bindPopup("District: " + feature.feature.properties.ADM1_EN);
+            });
+        });
+
+        var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").on('ready', function(layer) {
+            layer.eachLayer(function(feature) {
+                feature.bindPopup("Station: " + feature.feature.properties.Station);
+            });
+        });
+
+        // Create layer control objects
+        var baseMaps = {
+            "Open Street Map": osm,
+            "Topographic": topo,
+            "Satellite": satellite
+        };
+
+        var overlayMaps = {
+            "Provinces": adm1,
+            "Districts": adm2,
+            "Weather Stations": majorStns
+        };
+
+        // Add layer control to the map
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
+    </script>
 
 </body>
 </html>
-

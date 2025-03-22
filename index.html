@@ -1,234 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>weather gespatial app</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
- 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather Monitoring App</title>
+
+    <!-- Leaflet CSS and JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <!-- Omnivore plugin for CSV/KML/GeoJSON -->
+    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
+
     <style>
-        /* Sidebar Styles */
-        .sidebar {
-            width: 23%;
+        body {
+            margin: 0;
+            padding: 0;
             height: 100vh;
-            background-color: lightgrey;
-            padding: 16px;
-            position: fixed;
-            top: 0;
-            left: 0;
+            overflow: hidden;
         }
 
-        /* Sidebar Links */
-        .sidebar a {
-            display: block;
-            padding: 12px;
-            text-decoration: none;
-            color: black;
-            background-color: white;
-            margin-bottom: 18px;
+        .map-container {
+            display: flex;
+            height: 100vh;
         }
 
-        .sidebar a:hover {
-            background-color: #ddd;
+        #map {
+            width: 100%;
+            height: 100%;
         }
 
-        /* Page Content */
-        .content {
-            margin-left: 25%;
+        .sidebar {
+            width: 20%;
+            background-color: #c4e4ef;
+            padding: 10px;
+            overflow-y: auto;
         }
-
-        /* Header Styles */
-        .header {
-            background-color: teal;
-            color: white;
-            padding: 16px;
+        .map-header{
+          background-color:rgb(115, 118, 118);
+          padding: 20px;
+          text-align: center;
+          color:white
         }
-
-        /* Container Styles */
-        .container {
-            padding: 16px;
-        }
-
-        /* Full-width image */
-        .full-width-img {
-            width: 50%;
-            margin-top: 16px;
-        }
-
-       /* Base styles */
-       .w3-container {
-      padding: 1px;
-      text-align: center;
-    }
-
-    /* Grid row */
-    .w3-row {
-      display: flex;
-      flex-wrap:nowrap;
-      width: 80%;
-    }
-
-    /* Column styling */
-    .w3-col {
-      text-align: center;
-      padding: 1px;
-    }
-
-    /* Background Colors */
-    .w3-green { background-color: green; color: white; }
-    .w3-blue { background-color: blue; color: white; }
-    .w3-red { background-color: red; color: white; }
-    .w3-dark-grey { background-color: darkgrey; color: white; }
-    .w3-purple { background-color: purple; color: white; }
     </style>
 </head>
 <body>
 
-<!-- Sidebar -->
-<div class="sidebar">
-    <h3>Menu</h3>
-    <a href="#">Home</a>
-    <a href="#">Raster maps</a>
-    <a href="#">Graphs </a>
-    <a href="#">Data analytics</a>   
-    <a href="#">Weather alerts</a>
-    <a href="#">Settings and uploads</a>
-</div>
+  <header class="map-header">
+      <h2>Weather Monitoring App</h2>
+  </header>  
 
-<!-- Page Content -->
-<div class="content">
-    <div class="header">
-        <h1>Weather monitoring system</h1>
-        <p  > add some butons for printing / exporting  maps here</p>
+    <div class="map-container">
+         <nav class="sidebar">
+            <h2>Layer Control</h2>
+            <h2>Basemapsl</h2>
+            <p>Some layers...</p>
+            <p>More layers...</p>
+            <p>Even more layers...</p>
+            <p>Scrollable content here...</p>
+            <p>Keep adding more layers and this div will scroll!</p>
+            <h2>Boundaries</h2>
+            <p>Some layers...</p>
+            <p>More layers...</p>
+            <p>Even more layers...</p>
+            <p>Scrollable content here...</p>
+            <p>Keep adding more layers and this div will scroll!</p>			<h2>Layer Control</h2>
+            <p>Some layers...</p>
+            <p>More layers...</p>
+            <p>Even more layers...</p>
+            <p>Scrollable content here...</p>
+            <p>Keep adding more layers and this div will scroll!</p>
+        </nav>     
+        <div id="map"></div>
+
     </div>
 
-        <!-- Page 2 -->
-    <div class="w3-row">
-        <div id="map" style="width:1700%">
-            <p>Rainfall stations</p>
-        </div>
-        <div id="map2" style="padding: 15px;border: #d57c7c; width: 900%;" >
-        <!-- <div id="map2" style="padding: 15px; background-color:aqua; width: 700%;" ></div> -->
-            <p>insert summary of <br>key weather elements
-            <br>here with some graphic <br>alternatively add graph<br><br></p>
-        </div>
-    </div>
-</div>
+    <script>
+        console.log("Initializing map...");
 
+        // Initialize the map
+        var map = L.map('map').setView([-19.0154, 29.1749], 6);
+        console.log(map); // Check if map initializes correctly
 
-<!-- Leaflet javascript code here -->
-<script>
-    var map = L.map('map').setView([-19.0154, 29.1749], 6);
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      maxZoom: 19 ,minZoom: 6,
-      }).addTo(map);
-
-        // Base Map Layers
-    var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
-
-    var satellite = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-        maxZoom: 18,
-        attribution: '&copy; OpenTopoMap contributors'
-    });
-
-    /* add baseline data*/
-    /* var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").addTo(map); */
-    /*var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map) */
-    /* var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").addTo(map) */
-
-    /* Add the pop binder */
-    var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson")
-    .on('ready', function(layer) {
-        var geojsonadm1 = layer.target;
-        geojsonadm1.eachLayer(function(layer) {
-            layer.bindPopup("Province: " + layer.feature.properties.ADM1_EN);
+        // Define basemap layers
+        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, minZoom: 6
         });
-    })
-    .addTo(map);
 
-    /* add stations */
+        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19, minZoom: 6
+        });
 
-    var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map);
-    majorStns.on('ready', function(layer) {
-    majorStns.eachLayer(function(layer) {
-    layer.bindPopup("Station: " + layer.feature.properties.Station)});
-    })
-    
-    
+        var satellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg', {
+            maxZoom: 19, minZoom: 6
+        });
 
-/* /* /* /* /* add layers with tooltips */
+        // Add default basemap
+        osm.addTo(map);
 
+        // Define overlay layers
+        var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").on('ready', function(layer) {
+            layer.eachLayer(function(feature) {
+                feature.bindPopup("Province: " + feature.feature.properties.ADM1_EN);
+            });
+        });
 
-   /*  markers for major cities  */
-    var marker = L.marker([-19.0453, 29.172]).addTo(map);
-    var cities = [
-        { name: "Harare", coords: [-17.8292, 31.0522] },
-        { name: "Bulawayo", coords: [-20.1575, 28.5835] },
-        { name: "Gweru", coords: [-19.45, 29.8167] },
-        { name: "Mutare", coords: [-18.9707, 32.6709] },
-        { name: "Masvingo", coords: [-20.0637, 30.8277] },
-        { name: "Hwange", coords: [-18.3651, 26.4988] }
-    ];
+        var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").on('ready', function(layer) {
+            layer.eachLayer(function(feature) {
+                feature.bindPopup("District: " + feature.feature.properties.ADM1_EN);
+            });
+        });
 
-    // Create a layer group
-    var cityMarkers = L.layerGroup();
+        var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").on('ready', function(layer) {
+            layer.eachLayer(function(feature) {
+                feature.bindPopup("Station: " + feature.feature.properties.Station);
+            });
+        });
 
-    // Loop through the cities and add markers
-    cities.forEach(function(city) {
-        var marker = L.marker(city.coords)
-            .bindPopup(`<b>${city.name}</b>`)
-            .addTo(cityMarkers);
-    });
-    // Add the layer group to the map
-    cityMarkers.addTo(map);
+        // Create layer control objects
+        var baseMaps = {
+            "Open Street Map": osm,
+            "Topographic": topo,
+            "Satellite": satellite
+        };
 
-    var map2 = L.map('map2').setView([-19.0154, 29.1749], 6);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-    }).addTo(map2);
+        var overlayMaps = {
+            "Provinces": adm1,
+            "Districts": adm2,
+            "Weather Stations": majorStns
+        };
 
-
-
-
-
-
-
-// ----------------- Filter dataset  -----------------//
-// Define a custom layer with a filter function
-var customLayer = L.geoJson(null, {
-    filter: function (feature) {
-        return feature.properties.Rainfall_mm > 30; // Only keep records with rainfall > 20
-    },
-    pointToLayer: function (feature, latlng) {
-        return L.marker(latlng).bindPopup(
-            "<b>Station:</b> " + feature.properties.Station + 
-            "<br><b>Rainfall:</b> " + feature.properties.Rainfall_mm + " mm"
-        );
-    }
-});
-
-// Load CSV data using omnivore
-var weatherStations = omnivore.csv("/assets/data/csv/weather_data_small.csv", null, customLayer)
-    .on('ready', function () {
-        console.log("CSV Data Loaded Successfully!");
-    })
-    .addTo(map2);
-
-/* Layer control   */
-var baseMaps = {
-    "admin1": adm1,
-    "stations": majorStns
-  }
-  L.control.layers(baseMaps, satellite, osm, { collapsed: false }).addTo(map);
-
-
-  </script>
-
+        // Add layer control to the map
+        L.control.layers(baseMaps, overlayMaps).addTo(map);
+    </script>
 
 </body>
 </html>
-
-
-
-
