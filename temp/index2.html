@@ -3,135 +3,153 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Monitoring App</title>
+    <title>Rainfall Stations</title>
 
-    <!-- Leaflet CSS and JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-    <!-- Omnivore plugin for CSV/KML/GeoJSON -->
-    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
+    <!-- Chart.js for Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+    <!-- Custom CSS for Styling -->
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .map-container {
+        /* Flexbox container for map and graph side by side */
+        .container {
             display: flex;
-            height: 100vh;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 20px;
         }
 
+        /* Map container takes up 60% of the screen width */
         #map {
-            width: 100%;
-            height: 100%;
+            width: 60%;
+            height: 500px;
+            border-radius: 8px;
         }
 
-        .sidebar {
-            width: 20%;
-            background-color: #edf3f5;
-            padding: 10px;
-            overflow-y: auto;
+        /* Graph container takes up 35% of the screen width */
+        #graphContainer {
+            width: 35%;
+            height: 500px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
         }
-        .map-header{
-          background-color:rgb(115, 118, 118);
-          padding: 20px;
-          text-align: center;
-          color:white
+
+        /* Resize the chart canvas */
+        #rainfallChart {
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #map, #graphContainer {
+                width: 90%;
+                height: 400px;
+            }
         }
     </style>
 </head>
 <body>
 
-  <header class="map-header">
-      <h2>Weather Monitoring App</h2>
-  </header>  
-
-    <div class="map-container">
-         <nav class="sidebar">
-            <h2>Layer Control</h2>
-            <h2>Basemapsl</h2>
-            <p>Some layers...</p>
-            <p>More layers...</p>
-            <p>Even more layers...</p>
-            <p>Scrollable content here...</p>
-            <p>Keep adding more layers and this div will scroll!</p>
-            <h2>Boundaries</h2>
-            <p>Some layers...</p>
-            <p>More layers...</p>
-            <p>Even more layers...</p>
-            <p>Scrollable content here...</p>
-            <p>Keep adding more layers and this div will scroll!</p>			<h2>Layer Control</h2>
-            <p>Some layers...</p>
-            <p>More layers...</p>
-            <p>Even more layers...</p>
-            <p>Scrollable content here...</p>
-            <p>Keep adding more layers and this div will scroll!</p>
-        </nav>     
+    <!-- Flexbox Container for Map and Graph -->
+    <div class="container">
+        <!-- Leaflet Map -->
         <div id="map"></div>
 
+        <!-- Graph Container for the Chart -->
+        <div id="graphContainer">
+            <canvas id="rainfallChart"></canvas>
+        </div>
     </div>
 
     <script>
-        console.log("Initializing map...");
+        // Initialize Leaflet Map
+        var map = L.map('map').setView([-18.5, 30.5], 6);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 
-        // Initialize the map
-        var map = L.map('map').setView([-19.0154, 29.1749], 6);
-        console.log(map); // Check if map initializes correctly
+        // Synthetic Station Data
+        var stations = [
+            {id: 1, name: "Harare", lat: -17.8292, lon: 31.0522},
+            {id: 2, name: "Bulawayo", lat: -20.1323, lon: 28.6265},
+            {id: 3, name: "Mutare", lat: -18.9707, lon: 32.6705},
+            {id: 4, name: "Masvingo", lat: -20.0758, lon: 30.8327},
+            {id: 5, name: "Gweru", lat: -19.4500, lon: 29.8167}
+        ];
 
-        // Define basemap layers
-        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19, minZoom: 6
-        });
-
-        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19, minZoom: 6
-        });
-
-        var satellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg', {
-            maxZoom: 19, minZoom: 6
-        });
-
-        // Add default basemap
-        osm.addTo(map);
-
-        // Define overlay layers
-        var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").on('ready', function(layer) {
-            layer.eachLayer(function(feature) {
-                feature.bindPopup("Province: " + feature.feature.properties.ADM1_EN);
-            });
-        });
-
-        var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").on('ready', function(layer) {
-            layer.eachLayer(function(feature) {
-                feature.bindPopup("District: " + feature.feature.properties.ADM1_EN);
-            });
-        });
-
-        var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").on('ready', function(layer) {
-            layer.eachLayer(function(feature) {
-                feature.bindPopup("Station: " + feature.feature.properties.Station);
-            });
-        });
-
-        // Create layer control objects
-        var baseMaps = {
-            "Open Street Map": osm,
-            "Topographic": topo,
-            "Satellite": satellite
+        // Rainfall Data (Simulated)
+        var rainfallData = {
+            1: [ {date: "2024-03-01", rainfall: 12.5}, {date: "2024-03-02", rainfall: 8.2}, {date: "2024-03-03", rainfall: 6.8} ],
+            2: [ {date: "2024-03-01", rainfall: 5.7}, {date: "2024-03-02", rainfall: 6.1}, {date: "2024-03-03", rainfall: 4.2} ],
+            3: [ {date: "2024-03-01", rainfall: 9.3}, {date: "2024-03-02", rainfall: 7.8}, {date: "2024-03-03", rainfall: 10.1} ],
+            4: [ {date: "2024-03-01", rainfall: 3.9}, {date: "2024-03-02", rainfall: 2.4}, {date: "2024-03-03", rainfall: 5.6} ],
+            5: [ {date: "2024-03-01", rainfall: 10.2}, {date: "2024-03-02", rainfall: 9.5}, {date: "2024-03-03", rainfall: 8.7} ]
         };
 
-        var overlayMaps = {
-            "Provinces": adm1,
-            "Districts": adm2,
-            "Weather Stations": majorStns
-        };
+        // Add Station Markers
+        stations.forEach(station => {
+            var marker = L.marker([station.lat, station.lon]).addTo(map)
+                .bindPopup(`<b>${station.name}</b><br>Click for Rainfall Data`)
+                .on('click', function() {
+                    plotRainfall(station.id, station.name);
+                });
+        });
 
-        // Add layer control to the map
-        L.control.layers(baseMaps, overlayMaps).addTo(map);
+        // Function to Plot Rainfall Data
+        var chartInstance = null;
+        function plotRainfall(stationId, stationName) {
+            var ctx = document.getElementById('rainfallChart').getContext('2d');
+            var data = rainfallData[stationId];
+            var labels = data.map(d => d.date);
+            var values = data.map(d => d.rainfall);
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: `Rainfall at ${stationName}`,
+                        data: values,
+                        borderColor: '#007bff',
+                        backgroundColor: 'rgba(0, 123, 255, 0.2)',
+                        borderWidth: 2,
+                        pointRadius: 5,
+                        pointBackgroundColor: '#007bff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: 'rgba(200, 200, 200, 0.3)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: true, labels: { color: '#333' } },
+                        tooltip: { enabled: true }
+                    }
+                }
+            });
+        }
     </script>
 
 </body>
