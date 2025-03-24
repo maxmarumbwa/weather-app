@@ -167,26 +167,56 @@
 
         /* Ploting chart graphics */
 /*         Bar graph */
-         const ctx = document.getElementById('graphCanvas');
-        new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+// Function to load and parse CSV
+function loadCSV(url, callback) {
+    fetch(url)
+        .then(response => response.text())
+        .then(data => {
+            const rows = data.split("\n").slice(1); // Skip header row
+            let labels = [];
+            let values = [];
+
+            rows.forEach(row => {
+                const cols = row.split(",");
+                if (cols.length === 2) {
+                    labels.push(cols[0].trim());  // Month
+                    values.push(parseFloat(cols[1])); // Rainfall (mm)
+                }
+            });
+
+            callback(labels, values);
+        })
+        .catch(error => console.error("Error loading CSV:", error));
+}
+
+// Function to plot chart
+function plotChart(labels, values) {
+    const ctx = document.getElementById('graphCanvas').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
             datasets: [{
-              label: '# of Votes',
-              data: [12, 19, 3, 5, 2, 3],
-              borderWidth: 1
+                label: 'Monthly Rainfall in Harare (mm)',
+                data: values,
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
+                borderWidth: 1
             }]
-          },
-          options: {
+        },
+        options: {
             scales: {
-              y: {
-                beginAtZero: true
-              }
+                y: {
+                    beginAtZero: true
+                }
             }
-          }
-        });
-        
+        }
+    });
+}
+
+// Load CSV and plot graph
+loadCSV("assets/data/csv/harare_rainfall.csv", plotChart);
+
 
 
     </script>
