@@ -86,7 +86,7 @@
             {id: 4, name: "Masvingo", lat: -20.0758, lon: 30.8327},
             {id: 5, name: "Gweru", lat: -19.4500, lon: 29.8167}
         ];
-
+         console.log(stations); // Check if stations are loaded correctly
         // Rainfall Data (Simulated)
         var rainfallData = {
             1: [ {date: "2024-03-01", rainfall: 12.5}, {date: "2024-03-02", rainfall: 8.2}, {date: "2024-03-03", rainfall: 6.8} ],
@@ -95,6 +95,7 @@
             4: [ {date: "2024-03-01", rainfall: 3.9}, {date: "2024-03-02", rainfall: 2.4}, {date: "2024-03-03", rainfall: 5.6} ],
             5: [ {date: "2024-03-01", rainfall: 10.2}, {date: "2024-03-02", rainfall: 9.5}, {date: "2024-03-03", rainfall: 8.7} ]
         };
+        console.log(rainfallData); // Check if data is loaded correctly
 
         // Add Station Markers
         stations.forEach(station => {

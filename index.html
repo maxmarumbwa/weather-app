@@ -53,10 +53,9 @@
           height: 100vh;
         }
         .graph{
-          width: 45%;  /* Adjust width so the map has enough space */
-          display: flex;
-          justify-content: center; /* Center the canvas */
-          align-items: center;
+          width: 40%;
+          height: 45%;
+  
         }
         #graphCanvas {
         width: 95% !important;  /* Make sure it resizes properly */
@@ -94,7 +93,7 @@
         </nav> 
        <div class="main-area">
         <div id="map"></div>
-        <div>
+        <div class="graph">
           <canvas id="graphCanvas"> </canvas>
         </div>
        </div>
@@ -168,55 +167,60 @@
         /* Ploting chart graphics */
 /*         Bar graph */
 // Function to load and parse CSV
-function loadCSV(url, callback) {
-    fetch(url)
-        .then(response => response.text())
-        .then(data => {
-            const rows = data.split("\n").slice(1); // Skip header row
-            let labels = [];
-            let values = [];
+async function loadCSV() {
+            try {
+                const response = await fetch("temp/month_rain.csv");
+                const data = await response.text();
+                const rows = data.split("\n").slice(1);
+                
+                let labels = [];
+                let values = [];
+                 
+                console.log(labels)
+                rows.forEach(row => {
+                    const cols = row.split(",");
+                    if (cols.length >= 2) {
+                        labels.push(cols[0]); 
+                        values.push(parseFloat(cols[1])); 
+                    }
+                });
 
-            rows.forEach(row => {
-                const cols = row.split(",");
-                if (cols.length === 2) {
-                    labels.push(cols[0].trim());  // Month
-                    values.push(parseFloat(cols[1])); // Rainfall (mm)
-                }
-            });
-
-            callback(labels, values);
-        })
-        .catch(error => console.error("Error loading CSV:", error));
-}
-
-// Function to plot chart
-function plotChart(labels, values) {
-    const ctx = document.getElementById('graphCanvas').getContext('2d');
-    new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Monthly Rainfall in Harare (mm)',
-                data: values,
-                backgroundColor: 'rgba(54, 162, 235, 0.6)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
+                createChart(labels, values);
+            } catch (error) {
+                console.error("Error loading CSV:", error);
             }
         }
-    });
-}
 
-// Load CSV and plot graph
-loadCSV("assets/data/csv/harare_rainfall.csv", plotChart);
+        function createChart(labels, data) {
+            const ctx = document.getElementById("graphCanvas").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Population",
+                        data: data,
+                        backgroundColor: "rgba(75, 192, 192, 0.5)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Ensures full use of space
+                    layout: {
+                        padding: 0 // Removes internal padding
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
 
+        loadCSV();
 
 
     </script>

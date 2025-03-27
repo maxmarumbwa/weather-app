@@ -1,138 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather Monitoring App</title>
-
-    <!-- Leaflet CSS and JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-
-    <!-- Omnivore plugin for CSV/KML/GeoJSON -->
-    <script src="//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js"></script>
-
+    <title>Chart.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .map-container {
+        /* Container takes 50% width, but the chart will take the full space */
+        .chart-container {
+            width: 50%;
+            height: 400px;
+            position: relative;
+            border: 1px solid #ccc; /* Optional: Just for visualization */
             display: flex;
-            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Removes unwanted spacing */
         }
 
-        #map {
-            width: 100%;
-            height: 100%;
-        }
-
-        .sidebar {
-            width: 20%;
-            background-color: #c4e4ef;
-            padding: 10px;
-            overflow-y: auto;
-        }
-        .map-header{
-          background-color:rgb(115, 118, 118);
-          padding: 20px;
-          text-align: center;
-          color:white
+        /* Make canvas fill the container without padding */
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block; /* Removes default inline spacing */
         }
     </style>
 </head>
 <body>
-
-  <header class="map-header">
-      <h2>Weather Monitoring App</h2>
-  </header>  
-
-    <div class="map-container">
-         <nav class="sidebar">
-            <h2>Layer Control</h2>
-            <h2>Basemapsl</h2>
-            <p>Some layers...</p>
-            <p>More layers...</p>
-            <p>Even more layers...</p>
-            <p>Scrollable content here...</p>
-            <p>Keep adding more layers and this div will scroll!</p>
-            <h2>Boundaries</h2>
-            <p>Some layers...</p>
-            <p>More layers...</p>
-            <p>Even more layers...</p>
-            <p>Scrollable content here...</p>
-            <p>Keep adding more layers and this div will scroll!</p>			<h2>Layer Control</h2>
-            <p>Some layers...</p>
-            <p>More layers...</p>
-            <p>Even more layers...</p>
-            <p>Scrollable content here...</p>
-            <p>Keep adding more layers and this div will scroll!</p>
-        </nav>     
-        <div id="map"></div>
-
+    <h1>Test</h1>
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
     </div>
 
     <script>
-        console.log("Initializing map...");
+        async function loadCSV() {
+            try {
+                const response = await fetch("assets\data\csv\harare_rainfall.csv");
+                const data = await response.text();
+                const rows = data.split("\n").slice(1);
+                
+                let labels = [];
+                let values = [];
+                 
+                console.log(labels)
+                rows.forEach(row => {
+                    const cols = row.split(",");
+                    if (cols.length >= 2) {
+                        labels.push(cols[0]); 
+                        values.push(parseFloat(cols[1])); 
+                    }
+                });
+           
+                createChart(labels, values);
+            } catch (error) {
+                console.error("Error loading CSV:", error);
+            }
+        }
 
-        // Initialize the map
-        var map = L.map('map').setView([-19.0154, 29.1749], 6);
-        console.log(map); // Check if map initializes correctly
-
-        // Define basemap layers
-        var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19, minZoom: 6
-        });
-
-        var topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            maxZoom: 19, minZoom: 6
-        });
-
-        var satellite = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.jpg', {
-            maxZoom: 19, minZoom: 6
-        });
-
-        // Add default basemap
-        osm.addTo(map);
-
-        // Define overlay layers
-        var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").on('ready', function(layer) {
-            layer.eachLayer(function(feature) {
-                feature.bindPopup("Province: " + feature.feature.properties.ADM1_EN);
+        function createChart(labels, data) {
+            const ctx = document.getElementById("myChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Population",
+                        data: data,
+                        backgroundColor: "rgba(75, 192, 192, 0.5)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Ensures full use of space
+                    layout: {
+                        padding: 0 // Removes internal padding
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
-        });
+        }
 
-        var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").on('ready', function(layer) {
-            layer.eachLayer(function(feature) {
-                feature.bindPopup("District: " + feature.feature.properties.ADM1_EN);
-            });
-        });
+        loadCSV();
 
-        var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").on('ready', function(layer) {
-            layer.eachLayer(function(feature) {
-                feature.bindPopup("Station: " + feature.feature.properties.Station);
-            });
-        });
-
-        // Create layer control objects
-        var baseMaps = {
-            "Open Street Map": osm,
-            "Topographic": topo,
-            "Satellite": satellite
-        };
-
-        var overlayMaps = {
-            "Provinces": adm1,
-            "Districts": adm2,
-            "Weather Stations": majorStns
-        };
-
-        // Add layer control to the map
-        L.control.layers(baseMaps, overlayMaps).addTo(map);
+       
     </script>
-
 </body>
 </html>
+
+

@@ -1,198 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Split Layout</title>
-      <!--For leaflet  -->
-      <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
-      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-      <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-      <link rel="stylesheet" href="assets/css/styles.css">
-      <link rel="stylesheet" href="assets/css/style.css">
-       <!-- For importing csv, kml, gjson-->
-      <script src='//api.tiles.mapbox.com/mapbox.js/plugins/leaflet-omnivore/v0.3.1/leaflet-omnivore.min.js'></script>
-        
-
+    <title>Chart.js Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body{
-            margin: 40;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .parent {
+        /* Container takes 50% width, but the chart will take the full space */
+        .chart-container {
+            width: 50%;
+            height: 400px;
+            position: relative;
+            border: 1px solid #ccc; /* Optional: Just for visualization */
             display: flex;
-            margin: 40;
-            height: 100vh;
-            overflow: hidden;
-			
-        }
-        .left {
-            width: 25%;
-            background-color:rgb(155, 197, 197);
-            padding: 20px;
-		
-        }
-        .right {
-            width: 75%;
-            background-color: #5bb0d2;
-            padding:20px;
-            overflow-y:auto;
-        }
-        .banner{
-            background-color:rgb(188, 188, 232);
-            padding: 5px;
-            color: aliceblue;
-            text-align: center;
-            
+            justify-content: center;
+            align-items: center;
+            overflow: hidden; /* Removes unwanted spacing */
         }
 
-      /*   Page 2 map and controls */
-        .map-parent{
-            display: flex;
-            border:#75092f;
-            height: 75%;
-           
+        /* Make canvas fill the container without padding */
+        canvas {
+            width: 100% !important;
+            height: 100% !important;
+            display: block; /* Removes default inline spacing */
         }
-        .map-control{
-            width: 40vw;
-            
-
-        }
-        .main-map{
-          
-
-        }
-	ul{
-		font-size: larger; 
-		font-weight:bolder;
-	}
-    .navbar {
-        color:rgb(179, 8, 8);
-        font-size: larger;
-
-    }
-
-    map {
-  height: 200px;
-  width: 450%;
-  background-color: powderblue;
-}
-    
-
-
     </style>
 </head>
 <body>
-    <!-- Content for the header and navigation bar -->
-    <div class="banner">
-        <h2>Weather monitoring app</h2>
-        <div class="navbar">
-            <a href="#home" >Home</a>
-            <a href="#maps">Maps</a>
-            <a href="#" class="w3-bar-item w3-button">About</a>
-            <a href="#link">Link 3</a>
-            <a href="#contact" id="contact-link"><span class="icon solid fa-envelope">Graphs</span></a>
-          </div>
-    </div>
-
-   
-    <div class="parent">
-        <div class="left">
-    <!-- Content for the left part -->
-            <img src="/assets/images/profile-pic.jpg" alt="" width="50%">
-            <p><h2>This is the left part (25%)</h2></p>
-            <ul>
-                <ol>apple</ol>
-                <ol>orange</ol>
-                <ol>apple</ol>
-            </ul>
-            <div style="margin-top: 20%;"> </div>
-        </div>
-    
-<!-- main page content here -->
-        <div class="right">
-            <div class="main" style="height: 2000; background-color:crimson">
-                <img src="/assets/images/banner_.jpg" width="100%">
-                <!-- Content for the right part -->
-                <p><h2>This is the right part w(75%)</h2>Seasoned Geospatial Data Scientist with 16+ years of experience in GIS, remote sensing, and geospatial software development. I've worked with organizations such as UNICEF, UN-WFP, NASA, and the European Union on risk modeling, environmental monitoring, and GIS applications.
-                Skills include Python, GDAL, ArcPy, R, Google Earth Engine, GIS database development, and parametric insurance modeling. </p>
-                <p>Seasoned Geospatial Data Scientist with 16+ years of experience.</p>
-	
-            </div>
-
-            <!-- Content for page 2 with side by side divs -->
-            <div class="map-parent">
-                <div style="width: 80%; float:left" id="map">
-                    #left content in here
-                 </div>
-                 
-                 <div style="width: 20%; float:right" id="map1">
-                    <h2>Layer control</h2>
-                    <img src="/assets/images/pic02.jpg" width="100%">
-                 </div>
-
-            </div>
-
-
-            <!-- Content for page 3 -->
-            <div style="height: 400px; background-color:rgb(154, 131, 43)">
-                <img src="/assets/images/clouds banner.png" width="100%">
-               <p><h2>Page 3 content</h2></p>
-
-            <!-- Content for page 4 -->
-            <div style="height: 400px; background-color:rgb(90, 16, 74)">
-                <img src="/assets/images/clouds banner.png" width="100%">
-               <p><h2>Page 4 content</h2></p>                
-              
-            <!-- Content for page 5 -->
-            <div style="height: 400px; background-color:rgb(30, 10, 99)">
-                <img src="/assets/images/clouds banner.png" width="100%">
-               <p><h2>Page 5 content</h2></p>
-        </div>
-
+    <h1>Test</h1>
+    <div class="chart-container">
+        <canvas id="myChart"></canvas>
     </div>
 
     <script>
-            /* add baseline data*/
-        /* var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson").addTo(map); */
-        /*var major_stns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map) */
-        /* var adm2 = omnivore.geojson("/assets/data/geojson/zimadm2.geojson").addTo(map) */
+        async function loadCSV() {
+            try {
+                const response = await fetch("month_rain.csv");
+                const data = await response.text();
+                const rows = data.split("\n").slice(1);
+                
+                let labels = [];
+                let values = [];
+                 
+                console.log(labels)
+                rows.forEach(row => {
+                    const cols = row.split(",");
+                    if (cols.length >= 2) {
+                        labels.push(cols[0]); 
+                        values.push(parseFloat(cols[1])); 
+                    }
+                });
 
-        /* Add the pop binder */
-        var adm1 = omnivore.geojson("/assets/data/geojson/zimadm1.geojson")
-        .on('ready', function(layer) {
-            var geojsonadm1 = layer.target;
-            geojsonadm1.eachLayer(function(layer) {
-                layer.bindPopup("Province: " + layer.feature.properties.ADM1_EN);
+                createChart(labels, values);
+            } catch (error) {
+                console.error("Error loading CSV:", error);
+            }
+        }
+
+        function createChart(labels, data) {
+            const ctx = document.getElementById("myChart").getContext("2d");
+            new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: "Population",
+                        data: data,
+                        backgroundColor: "rgba(75, 192, 192, 0.5)",
+                        borderColor: "rgba(75, 192, 192, 1)",
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false, // Ensures full use of space
+                    layout: {
+                        padding: 0 // Removes internal padding
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
             });
-        })
-        .addTo(map);
+        }
 
-        /* add stations */
-
-        var majorStns = omnivore.csv("/assets/data/csv/weather_data_small.csv").addTo(map);
-        majorStns.on('ready', function(layer) {
-        majorStns.eachLayer(function(layer) {
-        layer.bindPopup("Station: " + layer.feature.properties.Station)});
-        })
-        
-    
-
-
-
-
-
-        var map = L.map('map').setView([-19.0154, 29.1749], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19 ,minZoom: 6,
-        }).addTo(map);
-
-        var map2 = L.map('map').setView([-19.0154, 29.1749], 6);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19 ,minZoom: 6,
-        }).addTo(map2);
-        </script>
+        loadCSV();
+        console.log(values)
+       
+    </script>
 </body>
-
 </html>
+
+

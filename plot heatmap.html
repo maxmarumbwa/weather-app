@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Heatmap</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div id="heatmap" style="width: 100%; height: 600px;"></div>
+
+    <script>
+        var zData = [
+            [1, 20, 30, 40, 50],
+            [60, 70, 80, 90, 100],
+            [110, 120, 130, 140, 150],
+            [160, 170, 180, 190, 200],
+            [210, 220, 230, 240, 250]
+        ];
+
+        var trace = {
+            z: zData,
+            type: 'heatmap',
+            colorscale: 'Viridis',  // Color scale
+        };
+
+        var layout = {
+            title: 'Heatmap Example',
+            xaxis: { title: 'X Axis' },
+            yaxis: { title: 'Y Axis' }
+        };
+
+        Plotly.newPlot('heatmap', [trace], layout);
+    </script>
+</body>
+</html>
